@@ -183,6 +183,54 @@
   .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
   .tag{padding:5px 10px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .15s}
   .tag.sel{border-color:var(--ars);background:rgba(245,200,66,.12);color:var(--ars)}
+
+  /* GOAL PLANNER */
+  .goal-planner{margin-top:12px;background:var(--surface2);border-radius:13px;padding:13px;border:1px solid var(--border)}
+  .goal-planner-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:10px}
+  .planner-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+  .planner-stat{background:var(--surface);border-radius:10px;padding:9px 11px}
+  .planner-stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;font-weight:600}
+  .planner-stat .val{font-family:'DM Mono',monospace;font-size:13px;font-weight:600}
+  .planner-status{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:10px;font-size:12px;line-height:1.5}
+  .status-on-track{background:rgba(62,245,192,.08);border:1px solid rgba(62,245,192,.2);color:var(--usd)}
+  .status-warning{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);color:var(--ars)}
+  .status-danger{background:rgba(255,95,126,.08);border:1px solid rgba(255,95,126,.2);color:var(--danger)}
+  .status-done{background:rgba(62,245,192,.08);border:1px solid rgba(62,245,192,.2);color:var(--usd)}
+  .planner-tip{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.6;padding:8px 10px;background:var(--surface);border-radius:9px}
+  .deadline-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;margin-bottom:8px}
+  .deadline-ok{background:rgba(62,245,192,.12);color:var(--usd)}
+  .deadline-warn{background:rgba(245,200,66,.12);color:var(--ars)}
+  .deadline-late{background:rgba(255,95,126,.12);color:var(--danger)}
+</style>
+  .week-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .week-stat{background:var(--surface2);border-radius:11px;padding:11px 13px}
+  .week-stat .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;font-weight:600}
+  .week-stat .val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
+  .week-days{display:flex;gap:4px;justify-content:space-between;margin-top:4px}
+  .week-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .week-day .day-lbl{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase}
+  .week-day .day-bar-wrap{width:100%;height:40px;display:flex;align-items:flex-end;justify-content:center}
+  .week-day .day-bar{width:70%;border-radius:3px 3px 0 0;min-height:3px;transition:height .3s ease}
+  .week-day .day-amt{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:center}
+  .week-day.today .day-lbl{color:var(--ars)}
+  .week-day.today .day-bar{background:var(--ars)!important}
+
+  /* PROJECTION */
+  .proj-hero{background:linear-gradient(135deg,#0d1f10 0%,#091408 100%);border:1px solid rgba(62,245,192,.15);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+  .proj-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(62,245,192,.1) 0%,transparent 70%);pointer-events:none}
+  .proj-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .proj-amount{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--usd);margin-bottom:2px}
+  .proj-amount.negative{color:var(--danger)}
+  .proj-sub{font-size:11px;color:var(--muted)}
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .proj-stat{background:var(--surface2);border-radius:11px;padding:11px 13px}
+  .proj-stat .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;font-weight:600}
+  .proj-stat .val{font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
+  .proj-bar-wrap{margin-top:4px}
+  .proj-bar-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
+  .proj-bar-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+  .proj-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+  .proj-msg{font-size:12px;line-height:1.6;padding:10px 12px;border-radius:10px;background:var(--surface2)}
 </style>
 </head>
 <body>
@@ -211,9 +259,21 @@
       <div class="balance-stat"><div class="lbl">Gastos</div><div class="val exp" id="hero-expense-usd">$0.00</div></div>
     </div>
   </div>
+  <!-- WEEKLY SUMMARY -->
+  <div class="card" id="weekly-card">
+    <div class="card-title">📅 Esta semana</div>
+    <div id="weekly-summary"></div>
+  </div>
+
+  <!-- SAVINGS PROJECTION -->
+  <div class="card" id="projection-card">
+    <div class="card-title">📈 Proyección de ahorro</div>
+    <div id="projection-content"></div>
+  </div>
+
   <div class="card">
     <div class="card-title">Movimientos recientes</div>
-    <div id="tx-list"><div class="empty"><div class="icon">🗂</div><p>Sin movimientos.<br>Toca <strong>+</strong> para agregar.</p></div></div>
+    <div id="tx-list"><div class="empty"><div class="icon">🗂</div><p>Sin movimientos.<br>Toca + para agregar.</p></div></div>
   </div>
 </div>
 
@@ -359,6 +419,7 @@
     <div class="field"><label>Emoji</label><input type="text" id="goal-emoji" placeholder="🎯" maxlength="2"></div>
     <div class="field"><label id="goal-target-lbl">Meta total (ARS)</label><input type="number" id="goal-target" placeholder="100000" min="1" step="0.01" inputmode="decimal"></div>
     <div class="field"><label id="goal-saved-lbl">Ahorro inicial (ARS)</label><input type="number" id="goal-saved" placeholder="0" min="0" step="0.01" inputmode="decimal"></div>
+    <div class="field"><label>Fecha límite (opcional)</label><input type="date" id="goal-deadline"></div>
     <button class="btn-primary" onclick="saveGoal()">Crear meta</button>
     <button class="btn-cancel" onclick="closeGoalModal()">Cancelar</button>
   </div>
@@ -479,6 +540,147 @@ function fmt(v,cur){return cur==='ars'?fmtARS(v):fmtUSD(v)}
 function fmtDate(d){const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('es-AR',{day:'numeric',month:'short'})}
 function catById(id){return categories.find(c=>c.id===id)||{emoji:'📦',name:'Sin categoría'}}
 
+// ══════ WEEKLY SUMMARY ══════
+function renderWeeklySummary(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const dow=today.getDay(); // 0=sun
+  const startOfWeek=new Date(today); startOfWeek.setDate(today.getDate()-dow);
+  const DAY_LABELS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const todayDow=today.getDay();
+
+  // Per-day totals for ARS (primary currency)
+  const dayExp=[0,0,0,0,0,0,0];
+  const dayInc=[0,0,0,0,0,0,0];
+  let weekInc={ars:0,usd:0}, weekExp={ars:0,usd:0};
+
+  transactions.forEach(t=>{
+    const d=new Date(t.date+'T12:00:00'); d.setHours(0,0,0,0);
+    if(d>=startOfWeek&&d<=today){
+      const dw=d.getDay();
+      if(t.cur==='ars'){
+        if(t.type==='income'){dayInc[dw]+=t.amount;weekInc.ars+=t.amount;}
+        else{dayExp[dw]+=t.amount;weekExp.ars+=t.amount;}
+      } else {
+        if(t.type==='income') weekInc.usd+=t.amount;
+        else weekExp.usd+=t.amount;
+      }
+    }
+  });
+
+  const maxBar=Math.max(...dayExp,...dayInc,1);
+  const daysHtml=DAY_LABELS.map((lbl,i)=>{
+    const isToday=i===todayDow;
+    const isFuture=new Date(startOfWeek.getTime()+i*86400000)>today;
+    const barH=isFuture?0:Math.round((dayExp[i]/maxBar)*40);
+    const barColor=dayExp[i]>0?'var(--danger)':'var(--border)';
+    return `<div class="week-day${isToday?' today':''}">
+      <div class="day-lbl">${lbl}</div>
+      <div class="day-bar-wrap"><div class="day-bar" style="height:${barH}px;background:${isToday?'var(--ars)':barColor}"></div></div>
+      <div class="day-amt">${dayExp[i]>0?'$'+Math.round(dayExp[i]/1000)+'k':isFuture?'':'—'}</div>
+    </div>`;
+  }).join('');
+
+  const netArs=weekInc.ars-weekExp.ars;
+  const netUsd=weekInc.usd-weekExp.usd;
+  const netColor=netArs>=0?'color:var(--ars)':'color:var(--danger)';
+
+  document.getElementById('weekly-summary').innerHTML=`
+    <div class="week-grid">
+      <div class="week-stat"><div class="lbl">Ingresos ARS</div><div class="val inc-ars">${fmtARS(weekInc.ars)}</div></div>
+      <div class="week-stat"><div class="lbl">Gastos ARS</div><div class="val exp">${fmtARS(weekExp.ars)}</div></div>
+      ${weekInc.usd||weekExp.usd?`
+      <div class="week-stat"><div class="lbl">Ingresos USD</div><div class="val inc-usd">${fmtUSD(weekInc.usd)}</div></div>
+      <div class="week-stat"><div class="lbl">Gastos USD</div><div class="val exp">${fmtUSD(weekExp.usd)}</div></div>`:''}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:12px;color:var(--muted);">Balance semanal ARS</span>
+      <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;${netColor}">${netArs>=0?'+':''}${fmtARS(netArs)}</span>
+    </div>
+    <div class="week-days">${daysHtml}</div>`;
+}
+
+// ══════ SAVINGS PROJECTION ══════
+function renderProjection(){
+  const now=new Date();
+  const year=now.getFullYear(), month=now.getMonth();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const dayOfMonth=now.getDate();
+  const daysLeft=daysInMonth-dayOfMonth;
+
+  // This month's data
+  const monthTxs=t=>{
+    const d=new Date(t.date+'T12:00:00');
+    return d.getMonth()===month&&d.getFullYear()===year;
+  };
+  const mtxs=transactions.filter(monthTxs);
+  const mInc={ars:0,usd:0}, mExp={ars:0,usd:0};
+  mtxs.forEach(t=>{
+    if(t.type==='income') mInc[t.cur]+=t.amount;
+    else mExp[t.cur]+=t.amount;
+  });
+
+  // Last 3 months average for projection
+  let avgInc={ars:0,usd:0}, avgExp={ars:0,usd:0}, monthsWithData=0;
+  for(let i=1;i<=3;i++){
+    let m=month-i, y=year;
+    if(m<0){m+=12;y--;}
+    const pastTxs=transactions.filter(t=>{const d=new Date(t.date+'T12:00:00');return d.getMonth()===m&&d.getFullYear()===y;});
+    if(pastTxs.length){
+      monthsWithData++;
+      pastTxs.forEach(t=>{
+        if(t.type==='income') avgInc[t.cur]+=t.amount;
+        else avgExp[t.cur]+=t.amount;
+      });
+    }
+  }
+  const months=monthsWithData||1;
+  avgInc.ars/=months; avgInc.usd/=months;
+  avgExp.ars/=months; avgExp.usd/=months;
+
+  // Project rest of month
+  const progress=dayOfMonth/daysInMonth;
+  const projIncArs=monthsWithData>0?avgInc.ars:mInc.ars/progress;
+  const projExpArs=monthsWithData>0?avgExp.ars:mExp.ars/progress;
+  const projIncUsd=monthsWithData>0?avgInc.usd:mInc.usd/progress;
+  const projExpUsd=monthsWithData>0?avgExp.usd:mExp.usd/progress;
+
+  const projSaveArs=projIncArs-projExpArs;
+  const projSaveUsd=projIncUsd-projExpUsd;
+  const savePct=projIncArs>0?Math.min(Math.max((projSaveArs/projIncArs)*100,0),100):0;
+
+  // Message
+  let msg='', msgColor='var(--muted)';
+  if(!mtxs.length){
+    msg='Agregá movimientos este mes para ver tu proyección.';
+  } else if(projSaveArs>0){
+    const pct=Math.round(projSaveArs/projIncArs*100);
+    if(pct>=30){msg=`🔥 Vas muy bien — estás ahorrando el ${pct}% de tus ingresos este mes.`;msgColor='var(--usd)';}
+    else if(pct>=15){msg=`👍 Buen ritmo — ahorrás el ${pct}% de tus ingresos. Podés apuntar a más.`;msgColor='var(--ars)';}
+    else{msg=`⚠️ Ahorrás solo el ${pct}%. Revisá en qué categorías podés reducir.`;msgColor='var(--ars)';}
+  } else {
+    msg='🚨 A este ritmo vas a gastar más de lo que ingresás este mes.';msgColor='var(--danger)';
+  }
+
+  document.getElementById('projection-content').innerHTML=`
+    <div class="proj-hero">
+      <div class="proj-label">Ahorro proyectado este mes · ARS</div>
+      <div class="proj-amount${projSaveArs<0?' negative':''}">${projSaveArs>=0?'+':''}${fmtARS(projSaveArs)}</div>
+      <div class="proj-sub">Basado en ${monthsWithData>0?`promedio de ${months} mes${months>1?'es':''} anterior${months>1?'es':''}`:'el ritmo actual del mes'}</div>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-stat"><div class="lbl">Ingreso proy. ARS</div><div class="val inc-ars">${fmtARS(projIncArs)}</div></div>
+      <div class="proj-stat"><div class="lbl">Gasto proy. ARS</div><div class="val exp">${fmtARS(projExpArs)}</div></div>
+      <div class="proj-stat"><div class="lbl">Ingreso proy. USD</div><div class="val inc-usd">${fmtUSD(projIncUsd)}</div></div>
+      <div class="proj-stat"><div class="lbl">Ahorro proy. USD</div><div class="val" style="color:${projSaveUsd>=0?'var(--usd)':'var(--danger)'}">${projSaveUsd>=0?'+':''}${fmtUSD(projSaveUsd)}</div></div>
+    </div>
+    <div class="proj-bar-wrap">
+      <div class="proj-bar-labels"><span>0%</span><span style="color:var(--usd)">Tasa de ahorro</span><span>100%</span></div>
+      <div class="proj-bar-track"><div class="proj-bar-fill" style="width:${savePct.toFixed(1)}%;background:${savePct>=30?'var(--usd)':savePct>=15?'var(--ars)':'var(--danger)'}"></div></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:right">${dayOfMonth} de ${daysInMonth} días · faltan ${daysLeft} días</div>
+    <div class="proj-msg" style="margin-top:10px;color:${msgColor}">${msg}</div>`;
+}
+
 // ══════ HOME ══════
 function renderHome(){
   ['usd','ars'].forEach(cur=>{
@@ -489,6 +691,8 @@ function renderHome(){
     document.getElementById('hero-income-'+cur).textContent=fmt(income,cur);
     document.getElementById('hero-expense-'+cur).textContent=fmt(expense,cur);
   });
+  renderWeeklySummary();
+  renderProjection();
   const sorted=[...transactions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,30);
   const list=document.getElementById('tx-list');
   if(!sorted.length){list.innerHTML=`<div class="empty"><div class="icon">🗂</div><p>Sin movimientos.<br>Toca <strong>+</strong> para agregar.</p></div>`;return;}
@@ -634,7 +838,7 @@ function openGoalModal(cur){
   document.getElementById('goal-modal-title').textContent=cur==='ars'?'Nueva meta ARS 🇦🇷':'Nueva meta USD 🇺🇸';
   document.getElementById('goal-target-lbl').textContent=`Meta total (${lbl})`;
   document.getElementById('goal-saved-lbl').textContent=`Ahorro inicial (${lbl})`;
-  ['goal-name','goal-emoji','goal-target','goal-saved'].forEach(id=>document.getElementById(id).value='');
+  ['goal-name','goal-emoji','goal-target','goal-saved','goal-deadline'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('goal-modal').classList.add('open');
 }
 function closeGoalModal(){document.getElementById('goal-modal').classList.remove('open')}
@@ -644,8 +848,9 @@ function saveGoal(){
   const target=parseFloat(document.getElementById('goal-target').value);
   const saved=parseFloat(document.getElementById('goal-saved').value)||0;
   const cur=document.getElementById('goal-cur').value;
+  const deadline=document.getElementById('goal-deadline').value||null;
   if(!name||!target||target<=0){showToast('⚠️ Completa los campos');return;}
-  goals.push({id:Date.now().toString(),cur,name,emoji,target,saved});
+  goals.push({id:Date.now().toString(),cur,name,emoji,target,saved,deadline});
   save('goals3',goals);closeGoalModal();renderGoals();showToast('🎯 Meta creada');
 }
 function deleteGoal(id){goals=goals.filter(g=>g.id!==id);save('goals3',goals);renderGoals();showToast('Meta eliminada')}
@@ -658,6 +863,111 @@ function contributeGoal(id){
   save('goals3',goals);input.value='';renderGoals();
   showToast(g.saved>=g.target?'🎉 ¡Meta alcanzada!':'💰 Ahorro registrado');
 }
+function goalPlannerHtml(g){
+  const remain=g.target-g.saved;
+  if(remain<=0) return `<div class="planner-status status-done">🎉 ¡Meta alcanzada! Felicitaciones.</div>`;
+
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  // Average monthly income for this currency
+  const monthsMap={};
+  transactions.filter(t=>t.cur===g.cur&&t.type==='income').forEach(t=>{
+    const d=new Date(t.date+'T12:00:00');
+    const key=`${d.getFullYear()}-${d.getMonth()}`;
+    monthsMap[key]=(monthsMap[key]||0)+t.amount;
+  });
+  const monthVals=Object.values(monthsMap);
+  const avgMonthlyIncome=monthVals.length?monthVals.reduce((a,b)=>a+b,0)/monthVals.length:0;
+
+  // Average monthly expenses
+  const expMap={};
+  transactions.filter(t=>t.cur===g.cur&&t.type==='expense').forEach(t=>{
+    const d=new Date(t.date+'T12:00:00');
+    const key=`${d.getFullYear()}-${d.getMonth()}`;
+    expMap[key]=(expMap[key]||0)+t.amount;
+  });
+  const expVals=Object.values(expMap);
+  const avgMonthlyExp=expVals.length?expVals.reduce((a,b)=>a+b,0)/expVals.length:0;
+  const avgMonthlySavings=avgMonthlyIncome-avgMonthlyExp;
+
+  let plannerHtml='';
+
+  if(g.deadline){
+    const deadline=new Date(g.deadline+'T12:00:00'); deadline.setHours(0,0,0,0);
+    const msLeft=deadline-today;
+    const daysLeft=Math.ceil(msLeft/86400000);
+    const weeksLeft=msLeft/(7*86400000);
+    const monthsLeft=msLeft/(30.44*86400000);
+
+    const neededPerWeek=weeksLeft>0?remain/weeksLeft:Infinity;
+    const neededPerMonth=monthsLeft>0?remain/monthsLeft:Infinity;
+    const maxSpendPerWeek=avgMonthlyIncome>0?(avgMonthlyIncome/4.33)-neededPerWeek:null;
+
+    // Status
+    let statusCls, statusMsg;
+    if(daysLeft<0){
+      statusCls='status-danger'; statusMsg='⛔ La fecha límite ya pasó. Actualizá la meta.';
+    } else if(avgMonthlySavings>=neededPerMonth){
+      statusCls='status-on-track'; statusMsg='✅ Con tu ritmo actual de ahorro llegás a tiempo.';
+    } else if(avgMonthlySavings>0&&avgMonthlySavings>=neededPerMonth*0.7){
+      statusCls='status-warning'; statusMsg='⚠️ Casi llegas, pero necesitás ahorrar un poco más por mes.';
+    } else {
+      statusCls='status-danger'; statusMsg='🚨 A este ritmo no llegás a tiempo. Necesitás aumentar tu ahorro.';
+    }
+
+    const deadlineBadgeCls=daysLeft<0?'deadline-late':daysLeft<30?'deadline-warn':'deadline-ok';
+    const deadlineStr=deadline.toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'});
+
+    plannerHtml=`
+      <div class="goal-planner">
+        <div class="goal-planner-title">📋 Plan para llegar a la meta</div>
+        <div class="deadline-badge ${deadlineBadgeCls}">📅 ${deadlineStr} · ${daysLeft>0?daysLeft+' días':daysLeft===0?'Hoy':'Vencida'}</div>
+        <div class="planner-grid">
+          <div class="planner-stat">
+            <div class="lbl">Necesitás ahorrar</div>
+            <div class="val" style="color:var(--ars)">${fmt(neededPerWeek,g.cur)}<span style="font-size:9px;font-weight:400;color:var(--muted)">/sem</span></div>
+          </div>
+          <div class="planner-stat">
+            <div class="lbl">Por mes</div>
+            <div class="val" style="color:var(--ars)">${fmt(neededPerMonth,g.cur)}<span style="font-size:9px;font-weight:400;color:var(--muted)">/mes</span></div>
+          </div>
+          ${maxSpendPerWeek!==null?`
+          <div class="planner-stat">
+            <div class="lbl">Podés gastar máx.</div>
+            <div class="val" style="color:${maxSpendPerWeek>=0?'var(--usd)':'var(--danger)'}">${maxSpendPerWeek>=0?fmt(maxSpendPerWeek,g.cur):'$0'}<span style="font-size:9px;font-weight:400;color:var(--muted)">/sem</span></div>
+          </div>`:''}
+          <div class="planner-stat">
+            <div class="lbl">Ahorro prom. actual</div>
+            <div class="val" style="color:${avgMonthlySavings>=0?'var(--usd)':'var(--danger)'}">${avgMonthlySavings!==0?fmt(avgMonthlySavings,g.cur):'—'}<span style="font-size:9px;font-weight:400;color:var(--muted)">/mes</span></div>
+          </div>
+        </div>
+        <div class="planner-status ${statusCls}">${statusMsg}</div>
+        ${maxSpendPerWeek!==null&&maxSpendPerWeek>=0?`<div class="planner-tip">💡 Para llegar el <strong>${deadlineStr}</strong>, tu límite de gasto semanal es <strong>${fmt(maxSpendPerWeek,g.cur)}</strong>. Te faltan <strong>${fmt(remain,g.cur)}</strong> para la meta.</div>`:''}
+      </div>`;
+  } else {
+    // No deadline — just show how long it will take at current pace
+    if(avgMonthlySavings>0){
+      const monthsNeeded=remain/avgMonthlySavings;
+      const weeksNeeded=remain/(avgMonthlySavings/4.33);
+      const maxSpendPerWeek=(avgMonthlyIncome/4.33)-(avgMonthlySavings/4.33);
+      plannerHtml=`
+        <div class="goal-planner">
+          <div class="goal-planner-title">📋 A tu ritmo actual</div>
+          <div class="planner-grid">
+            <div class="planner-stat"><div class="lbl">Tiempo estimado</div><div class="val" style="color:var(--ars)">${monthsNeeded<1?Math.ceil(weeksNeeded)+' sem':monthsNeeded<12?Math.ceil(monthsNeeded)+' mes':+(monthsNeeded/12).toFixed(1)+' años'}</div></div>
+            <div class="planner-stat"><div class="lbl">Ahorro actual</div><div class="val" style="color:var(--usd)">${fmt(avgMonthlySavings,g.cur)}<span style="font-size:9px;color:var(--muted)">/mes</span></div></div>
+            <div class="planner-stat"><div class="lbl">Gasto máx. semanal</div><div class="val" style="color:${maxSpendPerWeek>=0?'var(--usd)':'var(--danger)'}">${fmt(Math.max(maxSpendPerWeek,0),g.cur)}<span style="font-size:9px;color:var(--muted)">/sem</span></div></div>
+            <div class="planner-stat"><div class="lbl">Faltan</div><div class="val" style="color:var(--muted)">${fmt(remain,g.cur)}</div></div>
+          </div>
+          <div class="planner-tip">💡 Agregá una fecha límite a la meta para ver exactamente cuánto necesitás ahorrar por semana.</div>
+        </div>`;
+    } else {
+      plannerHtml=`<div class="goal-planner"><div class="planner-tip">💡 Agregá una fecha límite y registrá ingresos para ver tu plan de ahorro personalizado.</div></div>`;
+    }
+  }
+  return plannerHtml;
+}
+
 function renderGoals(){
   ['ars','usd'].forEach(cur=>{
     const list=document.getElementById('goals-'+cur);
@@ -674,7 +984,8 @@ function renderGoals(){
         </div>
         <div class="goal-track"><div class="goal-fill-${cur}" style="width:${pct.toFixed(1)}%"></div></div>
         <div class="goal-footer"><span class="goal-pct-${cur}">${pct.toFixed(0)}%</span><span class="goal-remain">${remain>0?'Faltan '+fmt(remain,cur):'✅ Completada'}</span></div>
-        ${remain>0?`<div class="goal-contribute"><input id="contrib-${g.id}" type="number" placeholder="Añadir ${cur.toUpperCase()}..." inputmode="decimal" step="0.01"><button class="btn-contribute" onclick="contributeGoal('${g.id}')">Añadir</button></div>`:''}
+        ${goalPlannerHtml(g)}
+        ${remain>0?`<div class="goal-contribute" style="margin-top:10px"><input id="contrib-${g.id}" type="number" placeholder="Añadir ${cur.toUpperCase()}..." inputmode="decimal" step="0.01"><button class="btn-contribute" onclick="contributeGoal('${g.id}')">Añadir</button></div>`:''}
       </div>`;
     }).join('');
   });
