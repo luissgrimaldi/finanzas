@@ -942,8 +942,24 @@ function goalPlannerHtml(g){
     expMap[key]=(expMap[key]||0)+t.amount;
   });
   const expVals=Object.values(expMap);
-  const avgMonthlyExp=expVals.length?expVals.reduce((a,b)=>a+b,0)/expVals.length:0;
-  const avgMonthlySavings=avgMonthlyIncome-avgMonthlyExp;
+  let avgMonthlyExp=expVals.length?expVals.reduce((a,b)=>a+b,0)/expVals.length:0;
+  let avgMonthlySavings=avgMonthlyIncome-avgMonthlyExp;
+
+  // Si no hay historial de transacciones, estimar desde ingresos/gastos fijos activos
+  let usedRecurring=false;
+  if(avgMonthlyIncome===0){
+    const FREQ_M={weekly:30/7,biweekly:2,monthly:1,yearly:1/12};
+    const recInc=recurring.filter(r=>r.active&&r.cur===g.cur&&r.type==='income')
+      .reduce((s,r)=>s+r.amount*(FREQ_M[r.freq]||1),0);
+    const recExp=recurring.filter(r=>r.active&&r.cur===g.cur&&r.type==='expense')
+      .reduce((s,r)=>s+r.amount*(FREQ_M[r.freq]||1),0);
+    if(recInc>0){
+      avgMonthlyIncome=recInc;
+      avgMonthlyExp=recExp;
+      avgMonthlySavings=recInc-recExp;
+      usedRecurring=true;
+    }
+  }
 
   let plannerHtml='';
 
@@ -992,12 +1008,12 @@ function goalPlannerHtml(g){
             <div class="val" style="color:${maxSpendPerWeek>=0?'var(--usd)':'var(--danger)'}">${maxSpendPerWeek>=0?fmt(maxSpendPerWeek,g.cur):'$0'}<span style="font-size:9px;font-weight:400;color:var(--muted)">/sem</span></div>
           </div>`:''}
           <div class="planner-stat">
-            <div class="lbl">Ahorro prom. actual</div>
+            <div class="lbl">Ahorro ${usedRecurring?'estimado (fijos)':'prom. actual'}</div>
             <div class="val" style="color:${avgMonthlySavings>=0?'var(--usd)':'var(--danger)'}">${avgMonthlySavings!==0?fmt(avgMonthlySavings,g.cur):'—'}<span style="font-size:9px;font-weight:400;color:var(--muted)">/mes</span></div>
           </div>
         </div>
         <div class="planner-status ${statusCls}">${statusMsg}</div>
-        ${maxSpendPerWeek!==null&&maxSpendPerWeek>=0?`<div class="planner-tip">💡 Para llegar el <strong>${deadlineStr}</strong>, tu límite de gasto semanal es <strong>${fmt(maxSpendPerWeek,g.cur)}</strong>. Te faltan <strong>${fmt(remain,g.cur)}</strong> para la meta.</div>`:''}
+        ${maxSpendPerWeek!==null&&maxSpendPerWeek>=0?`<div class="planner-tip">💡 Para llegar el <strong>${deadlineStr}</strong>, tu límite de gasto semanal es <strong>${fmt(maxSpendPerWeek,g.cur)}</strong>. Te faltan <strong>${fmt(remain,g.cur)}</strong> para la meta.${usedRecurring?' (Estimado en base a tus fijos activos)':''}</div>`:''}
       </div>`;
   } else {
     // No deadline — just show how long it will take at current pace
@@ -1017,7 +1033,7 @@ function goalPlannerHtml(g){
           <div class="planner-tip">💡 Agregá una fecha límite a la meta para ver exactamente cuánto necesitás ahorrar por semana.</div>
         </div>`;
     } else {
-      plannerHtml=`<div class="goal-planner"><div class="planner-tip">💡 Agregá una fecha límite y registrá ingresos para ver tu plan de ahorro personalizado.</div></div>`;
+      plannerHtml=`<div class="goal-planner"><div class="planner-tip">💡 Agregá una fecha límite${avgMonthlyIncome===0?' y configurá tus ingresos en Fijos':''} para ver tu plan de ahorro personalizado.</div></div>`;
     }
   }
   return plannerHtml;
