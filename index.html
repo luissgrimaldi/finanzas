@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mi Dinero">
 <meta name="theme-color" content="#0a0f1e">
+<link rel="manifest" href="/manifest.json">
 <title>Mi Dinero</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap');
@@ -176,6 +177,16 @@
   .section-divider .label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
   .section-divider .label.usd{background:rgba(62,245,192,.12);color:var(--usd)}
   .section-divider .label.ars{background:rgba(245,200,66,.12);color:var(--ars)}
+
+  /* UPDATE BANNER */
+  #update-banner{display:none;position:fixed;bottom:calc(76px + var(--safe-bot) + 12px);left:16px;right:16px;background:linear-gradient(135deg,#1a2235,#111827);border:1px solid var(--accent2);border-radius:16px;padding:13px 16px;z-index:300;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(91,143,255,.25);animation:slideUp .35s cubic-bezier(.34,1.56,.64,1)}
+  #update-banner.show{display:flex}
+  #update-banner .upd-text{flex:1;font-size:13px;font-weight:500;line-height:1.4;color:var(--text)}
+  #update-banner .upd-text span{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+  #update-banner .upd-btn{background:var(--accent2);border:none;border-radius:10px;color:white;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;padding:9px 16px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:transform .15s cubic-bezier(.34,1.56,.64,1),filter .15s}
+  #update-banner .upd-btn:active{transform:scale(.93);filter:brightness(.9)}
+  #update-banner .upd-close{background:none;border:none;color:var(--muted);font-size:18px;padding:4px;cursor:pointer;flex-shrink:0;line-height:1;transition:transform .15s cubic-bezier(.34,1.56,.64,1)}
+  #update-banner .upd-close:active{transform:scale(.85)}
 
   /* TOAST */
   .toast{position:fixed;top:calc(var(--safe-top) + 16px);left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:500;z-index:500;transition:transform .3s ease;white-space:nowrap}
@@ -498,10 +509,40 @@
 
 <div class="toast" id="toast"></div>
 
+<div id="update-banner">
+  <div class="upd-text">Nueva versión disponible <span>Tus datos no se borran</span></div>
+  <button class="upd-btn" onclick="applyUpdate()">Actualizar</button>
+  <button class="upd-close" onclick="dismissUpdate()">×</button>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 // enables instant :active feedback on iOS Safari (no touchstart listener = no tap highlight)
 document.addEventListener('touchstart', function(){}, true);
+
+// ══════ SERVICE WORKER ══════
+let _pendingSW = null;
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newSW = reg.installing;
+      newSW.addEventListener('statechange', () => {
+        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+          _pendingSW = newSW;
+          document.getElementById('update-banner').classList.add('show');
+        }
+      });
+    });
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+}
+function applyUpdate() {
+  if (_pendingSW) { _pendingSW.postMessage({ type: 'SKIP_WAITING' }); }
+  else { location.reload(); }
+}
+function dismissUpdate() {
+  document.getElementById('update-banner').classList.remove('show');
+}
 
 // ══════ STATE ══════
 let txType='income', txCur='ars', recCur='ars', recType='income';
